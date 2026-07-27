@@ -6,6 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     public float speed = 5f;
 
+    private Animator animator;
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
     void Update()
     {
         // lấy phím người chơi chọn
@@ -23,5 +28,6 @@ public class PlayerController : MonoBehaviour
             //xoay mặt theo hướng đã chọn
             transform.forward = moveDirection;
         }
+        animator.SetBool("running", moveDirection != Vector3.zero);
     }
 }
