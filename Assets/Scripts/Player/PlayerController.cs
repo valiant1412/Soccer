@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
         float vertical = Input.GetAxisRaw("Vertical");
 
         // lấy hướng
-        var moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
+        Vector3 moveDirection = new Vector3(horizontal, 0f, vertical).normalized;
 
         // di chuyển 
         Vector3 newTransformPosition = transform.position + moveDirection * speed * Time.deltaTime;

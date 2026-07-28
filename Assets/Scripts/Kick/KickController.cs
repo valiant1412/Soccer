@@ -42,16 +42,13 @@ public class KickController : MonoBehaviour
         cameraController.SetTarget(currentBall);
         if (currentBall != null)
         {
-            var ballrb = currentBall.GetComponent<Rigidbody>();
+            Rigidbody ballrb = currentBall.GetComponent<Rigidbody>();
             if (ballrb != null)
             {
-                // ballrb.isKinematic = true;
-                // ballrb.velocity = Vector3.zero;
-                // ballrb.angularVelocity = Vector3.zero;
+                ballrb.isKinematic = true;
 
                 Transform nearestGoal = GetNearestGoal(currentBall);
                 // set van toc
-                Debug.Log(nearestGoal == null);
                 while ((currentBall.position - nearestGoal.position).sqrMagnitude > reachNearestGoal * reachNearestGoal)
                 {
                     currentBall.position = Vector3.MoveTowards(currentBall.position, nearestGoal.position, ballSpeed * Time.deltaTime);
@@ -73,7 +70,7 @@ public class KickController : MonoBehaviour
         float nearestDistance = float.MaxValue;
         foreach (Transform goal in goals)
         {
-            var offset = currentBall.position - goal.position;
+            Vector3 offset = currentBall.position - goal.position;
             if (offset.sqrMagnitude < nearestDistance)
             {
                 nearestDistance = offset.sqrMagnitude;
@@ -85,7 +82,6 @@ public class KickController : MonoBehaviour
     public void AutoKick()
     {
         Transform farthestBall = BallController.instance.currentFarthestBall;
-        Debug.Log(farthestBall);
         if (!isBallRunning && farthestBall != null)
         {
             StartCoroutine(KickBallToGoal(farthestBall));

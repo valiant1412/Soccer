@@ -209,6 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+  rotateSpeed: 360
   minX: -14
   maxX: 14
   minZ: -9
