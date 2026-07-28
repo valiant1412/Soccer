@@ -15,6 +15,13 @@ public class BallBehavior : MonoBehaviour
         {
             rb.velocity = Vector3.zero;
             rb.angularVelocity = Vector3.zero;
+
+            var goal = collision.gameObject.GetComponent<GoalBehavior>();
+            if (goal != null)
+            {
+                goal.PlayConfetti();
+            }
+            KickController.instance.OnReachTheGoal();
         }
     }
 }

@@ -13,6 +13,8 @@ public class KickController : MonoBehaviour
     private bool isBallRunning = false;
 
     [SerializeField] private GameObject kickButon;
+
+    [SerializeField] private CameraController cameraController;
     void Awake()
     {
         if (instance == null)
@@ -37,6 +39,7 @@ public class KickController : MonoBehaviour
     {
         isBallRunning = true;
         kickButon.SetActive(false);
+        cameraController.SetTarget(currentBall);
         if (currentBall != null)
         {
             var ballrb = currentBall.GetComponent<Rigidbody>();
@@ -61,7 +64,6 @@ public class KickController : MonoBehaviour
                 }
             }
             isBallRunning = false;
-
         }
 
     }
@@ -90,4 +92,13 @@ public class KickController : MonoBehaviour
         }
     }
 
+    public void OnReachTheGoal()
+    {
+        StartCoroutine(ReturnCameraToPlayer());
+    }
+    public IEnumerator ReturnCameraToPlayer()
+    {
+        yield return new WaitForSeconds(2f);
+        cameraController.SetPlayer();
+    }
 }
