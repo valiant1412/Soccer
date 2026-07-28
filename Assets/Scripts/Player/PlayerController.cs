@@ -6,6 +6,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float speed = 5f;
+
+    [SerializeField] private float rotateSpeed = 10f;
     [SerializeField] private float minX = -14f;
     [SerializeField] private float maxX = 14f;
     [SerializeField] private float minZ = -9f;
@@ -34,7 +36,8 @@ public class PlayerController : MonoBehaviour
         if (moveDirection != Vector3.zero)
         {
             //xoay mặt theo hướng đã chọn
-            transform.forward = moveDirection;
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotateSpeed * Time.deltaTime);
         }
         animator.SetBool("running", moveDirection != Vector3.zero);
     }
