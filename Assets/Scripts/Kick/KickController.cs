@@ -7,16 +7,12 @@ public class KickController : MonoBehaviour
     public static KickController instance;
     [SerializeField] private Transform[] goals;
 
-    [SerializeField] private Transform[] balls;
+    [SerializeField] private float ballSpeed = 2f;
 
-    [SerializeField] private Transform target;
+    [SerializeField] private float reachNearestGoal = 1f;
+    private bool isBallRunning = false;
 
-    [SerializeField] private float distanceToKick = 2f;
     [SerializeField] private GameObject kickButon;
-
-    private Vector3 playerPosition;
-    // Start is called before the first frame update
-
     void Awake()
     {
         if (instance == null)
@@ -29,43 +25,69 @@ public class KickController : MonoBehaviour
             return;
         }
     }
-    void Start()
+    public void Kick()
     {
-        kickButon.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        GetBallsNearFromPlayer();
-    }
-    void Kick()
-    {
-
-    }
-    void GetDistanceFromBallToPlayer()
-    {
-
-    }
-    void GetBallsNearFromPlayer()
-    {
-        bool canKick = false;
-        foreach (Transform ball in balls)
+        if (!isBallRunning && BallController.instance.currentBall != null)
         {
-
-            Vector3 offset = target.position - ball.position;
-
-            if (offset.sqrMagnitude < distanceToKick * distanceToKick)
+            Transform currentBall = BallController.instance.currentBall;
+            StartCoroutine(KickBallToGoal(currentBall));
+        }
+    }
+    IEnumerator KickBallToGoal(Transform currentBall)
+    {
+        isBallRunning = true;
+        kickButon.SetActive(false);
+        if (currentBall != null)
+        {
+            var ballrb = currentBall.GetComponent<Rigidbody>();
+            if (ballrb != null)
             {
-                canKick = true;
-                break;
+                // ballrb.isKinematic = true;
+                // ballrb.velocity = Vector3.zero;
+                // ballrb.angularVelocity = Vector3.zero;
+
+                Transform nearestGoal = GetNearestGoal(currentBall);
+                // set van toc
+                Debug.Log(nearestGoal == null);
+                while ((currentBall.position - nearestGoal.position).sqrMagnitude > reachNearestGoal * reachNearestGoal)
+                {
+                    currentBall.position = Vector3.MoveTowards(currentBall.position, nearestGoal.position, ballSpeed * Time.deltaTime);
+                    yield return null;
+                }
+
+                if (ballrb != null)
+                {
+                    ballrb.isKinematic = false;
+                }
             }
+            isBallRunning = false;
 
         }
-        EnableKickButton(canKick);
+
     }
-    public void EnableKickButton(bool isEnable)
+    Transform GetNearestGoal(Transform currentBall)
     {
-        kickButon.SetActive(isEnable);
+        Transform nearestGoal = null;
+        float nearestDistance = float.MaxValue;
+        foreach (Transform goal in goals)
+        {
+            var offset = currentBall.position - goal.position;
+            if (offset.sqrMagnitude < nearestDistance)
+            {
+                nearestDistance = offset.sqrMagnitude;
+                nearestGoal = goal;
+            }
+        }
+        return nearestGoal;
     }
+    public void AutoKick()
+    {
+        Transform farthestBall = BallController.instance.currentFarthestBall;
+        Debug.Log(farthestBall);
+        if (!isBallRunning && farthestBall != null)
+        {
+            StartCoroutine(KickBallToGoal(farthestBall));
+        }
+    }
+
 }
