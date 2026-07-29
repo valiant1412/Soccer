@@ -8,6 +8,6 @@ public class ButtonController : MonoBehaviour
 
     public void ResetBtn()
     {
-        SceneManager.LoadScene("Location soccer field");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }
